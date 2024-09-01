@@ -23,10 +23,9 @@ const signup = async (req, res) => {
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
 
-        //https://avatar-placeholder.iran.liara.run/
-        const boyProfilePic = `https://avatar.iran.liara.run/public/boy?username=${username}`
+        const boyProfilePic = `https://robohash.org/${username}`
 
-        const girlProfilePic = `https://avatar.iran.liara.run/public/girl?username=${username}`
+        const girlProfilePic = `https://robohash.org/${username}`
 
         const newUser = new User({
             fullname,

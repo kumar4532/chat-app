@@ -4,7 +4,7 @@ export const getUsersForSideBar = async(req, res) => {
     try {
         const loggedInUser = req.user._id;
 
-        const filterUser = await User.find({
+        const users = await User.find({
             //not included ouselves
             _id: {$ne: loggedInUser}
         }).select("-password")
@@ -12,8 +12,7 @@ export const getUsersForSideBar = async(req, res) => {
         return res
         .status(200)
         .json({
-            message: "All users have been fetched",
-            filterUser
+            users
         })
 
     } catch (error) {
