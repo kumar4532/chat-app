@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom';
-import useSignup from '../../hooks/useLogin';
+import useLogin from '../../hooks/useLogin';
 
 function Login() {
 
@@ -9,11 +9,11 @@ function Login() {
     password: "",
   })
 
-  const {loading, signup} = useSignup();
+  const {loading, login} = useLogin();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await signup(inputs);
+    await login(inputs);
   }
 
   return (

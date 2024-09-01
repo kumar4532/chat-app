@@ -2,11 +2,11 @@ import {useState} from 'react'
 import toast from 'react-hot-toast';
 import { useAuthContext } from '../context/AuthContext'
 
-function useSignup() {
+function useLogin() {
   const [loading, setLoading] = useState(false);
   const { setAuthUser } = useAuthContext();
 
-  const signup = async ({username, password}) => {
+  const login = async ({username, password}) => {
         const success = handleInputErrors({ username, password });
         if (!success) return;   
 
@@ -28,18 +28,17 @@ function useSignup() {
             }
 
         } catch (error) {
-            console.log("Error is from catch");
-            
+            console.log("Error is login from catch"); 
             toast.error(error.message);
         } finally {
             setLoading(false);
         }
     };
 
-    return { loading, signup };
+    return { loading, login };
 };
 
-export default useSignup;
+export default useLogin;
 
 function handleInputErrors ({username, password}){
 

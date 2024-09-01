@@ -9,7 +9,7 @@ function Conversation() {
         {
           conversations.map((convo, idx) => (
             <SeperateConversations 
-              key={convo._id} 
+              key={convo._id}
               conversation={convo}
               lastIdx={idx === conversations.length - 1} 
             />

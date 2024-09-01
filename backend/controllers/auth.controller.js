@@ -27,7 +27,7 @@ const signup = async (req, res) => {
 
         const girlProfilePic = `https://robohash.org/${username}`
 
-        const newUser = new User({
+        const user = new User({
             fullname,
             username,
             password: hashedPassword,
@@ -36,12 +36,12 @@ const signup = async (req, res) => {
         })
 
         generateTokenAndSetCookies(newUser._id, res);
-        await newUser.save();
+        await user.save();
 
         return res
         .status(200)
         .json({
-            newUser
+            user
         })
 
     } catch (error) {
@@ -65,7 +65,6 @@ const login = async (req, res) => {
         return res
         .status(200)
         .json({
-            message:'login successful',
             user
         });
 
