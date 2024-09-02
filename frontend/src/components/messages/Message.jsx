@@ -1,21 +1,36 @@
 import React from 'react'
+import {useAuthContext} from "../../context/AuthContext"
+import useCoversation from '../../zustand/useConversation'
 
-function Message() {
+function Message({message}) {
+  const {authUser} = useAuthContext();
+  const {selectedConversation} = useCoversation();
+  const fromMe = authUser.user._id === message.senderId;
+  const chatClass = fromMe ? "chat-end" : "chat-start";
+  const bgClr = fromMe ? "bg-blue-500" : null;
+  const profilePic = fromMe ? authUser.user.profilePic : selectedConversation?.profilePic;
+
+  const messageTime = new Date(message.createdAt).toLocaleTimeString([], {
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false
+  });
+
   return (
-    <div className='chat chat-end'>
+    <div className={`chat ${chatClass} mb-1`}>
       <div className='chat-image avatar'>
         <div className='w-10 rounded-full'>
-          <img src="/bg.jpg" alt="tailwind css chat bubb;e component" />
+          <img src={profilePic} alt="tailwind css chat bubble component" />
         </div>
       </div>
-      <div className='chat-bubble text-white bg-blue-500'>
-        Yo!!! What the fuck.....
+      <div className={`chat-bubble text-white ${bgClr} mb-1`}>
+        {message.message}
       </div>
       <div className='chat-footer opacity-60 text-red-100 text-xs flex gap-1 items-center'>
-        12:42
+        {messageTime}
       </div>
     </div>
   )
 }
 
-export default Message
+export default Message;

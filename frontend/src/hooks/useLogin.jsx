@@ -41,11 +41,6 @@ function useLogin() {
 export default useLogin;
 
 function handleInputErrors ({username, password}){
-
-    console.log(username);
-    console.log(password);
-    
-
     if (!username || !password) {
        toast.error("Please fill all the fields"); 
        return false;

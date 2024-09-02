@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import Messages from './Messages'
 import MessageInput from './MessageInput'
 import {TiMessage} from 'react-icons/ti'
@@ -8,6 +8,10 @@ import {useAuthContext} from "../../context/AuthContext"
 function MessageContainer() {
   const {authUser} = useAuthContext();
   const { selectedConversation, setSelectedConversation } = useConversation()
+
+  useEffect(() => {
+    return () => setSelectedConversation(null);
+  }, [setSelectedConversation])
   
   return (
     <div className='md:min-w-[450px] flex flex-col'>
@@ -19,7 +23,7 @@ function MessageContainer() {
                     <span className='font-semibold text-slate-900 text-base'>To: {selectedConversation.fullname}</span>
                 </div>
 
-            <Messages />  
+            <Messages />
             <MessageInput />
             </>
           )

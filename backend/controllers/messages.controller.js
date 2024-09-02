@@ -35,7 +35,6 @@ export const sendMessage = async (req, res) => {
         return res
         .status(200)
         .json({
-            Message: "New message created successfully",
             newMessage
         })
 
@@ -54,10 +53,13 @@ export const getMessages = async(req, res) => {
             participents: {$all : [senderId, userToChatId]}
         }).populate("messages");
 
+        if (!conversation) {
+            return res.status(200).json("Please send a message to start a conversation.");
+        }
+
         return res
         .status(200)
         .json({
-            message: "Messages gotten successfully",
             messages: conversation.messages
         })
     } catch (error) {

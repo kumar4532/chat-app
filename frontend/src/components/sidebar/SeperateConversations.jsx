@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useEffect} from 'react'
 import useCoversation from '../../zustand/useConversation';
 
 function SeperateConversations({conversation, lastIdx}) {
