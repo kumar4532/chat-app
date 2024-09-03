@@ -11,7 +11,7 @@ function Conversation() {
             <SeperateConversations 
               key={convo._id}
               conversation={convo}
-              lastIdx={idx === conversations.length - 1} 
+              lastIdx={idx === conversations.length - 1}
             />
           ))
         }

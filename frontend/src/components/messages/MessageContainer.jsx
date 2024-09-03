@@ -19,10 +19,9 @@ function MessageContainer() {
           !selectedConversation ? <NoChatSelected user={authUser} /> : (
             <>
             {/* <Header /> */}
-                <div className='bg-slate-200 px-4 py-2 mb-2'>
-                    <span className='font-semibold text-slate-900 text-base'>To: {selectedConversation.fullname}</span>
-                </div>
-
+              <div className='bg-slate-200 px-4 py-2 mb-2'>
+                <span className='font-semibold text-slate-900 text-base'>To: {selectedConversation.fullname}</span>
+              </div>
             <Messages />
             <MessageInput />
             </>
