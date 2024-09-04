@@ -29,7 +29,6 @@ function useSignup() {
 
         } catch (error) {
             console.log("Error is from catch");
-            
             toast.error(error.message);
         } finally {
             setLoading(false);

@@ -35,7 +35,7 @@ const signup = async (req, res) => {
             profilePic: gender === "male" ? boyProfilePic : girlProfilePic
         })
 
-        generateTokenAndSetCookies(newUser._id, res);
+        generateTokenAndSetCookies(user._id, res);
         await user.save();
 
         return res

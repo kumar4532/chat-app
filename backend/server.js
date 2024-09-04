@@ -1,6 +1,7 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
+import { app, server } from './socket/socket.js';
 
 import authRoutes from './routes/auth.routes.js';
 import messageRoutes from "./routes/message.routes.js"
@@ -12,7 +13,6 @@ dotenv.config({
     path: './.env'
 })
 
-const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(express.json());  // to parse the incoming requests with json pyloads (from req.body)
@@ -24,7 +24,7 @@ app.use("/api/users", userRoutes);
 
 connectDB()
     .then(() => {
-        app.listen(PORT, () =>{
+        server.listen(PORT, () =>{
             console.log(`Server is running at port : ${PORT}`);
         })
     })

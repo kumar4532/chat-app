@@ -1,9 +1,9 @@
 import React, { useState } from 'react'
-import useCoversation from '../zustand/useConversation'
+import useConversation from '../zustand/useConversation'
 import toast from "react-hot-toast"
 
 function useSendMessage() {
-  const {messages, setMessages, selectedConversation} = useCoversation()
+  const {messages, setMessages, selectedConversation} = useConversation()
   const [loading, setLoading] = useState(false)
   
   const sendMessage = async(message) => {
