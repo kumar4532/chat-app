@@ -18,7 +18,6 @@ function useSendMessage() {
         })
 
         const data = await res.json();
-        console.log(data.newMessage);
         if (data.error) {
             throw new error
         }

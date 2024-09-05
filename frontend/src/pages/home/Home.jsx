@@ -1,6 +1,5 @@
 import React from 'react'
 import Sidebar from '../../components/sidebar/Sidebar';
-import Login from "../login/Login"
 import MessageContainer from '../../components/messages/MessageContainer';
 
 function Home() {

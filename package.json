@@ -6,7 +6,9 @@
     "daisyui": "^4.12.10"
   },
   "scripts": {
-    "dev": "nodemon -r dotenv/config --experimental-json-modules backend/server.js"
+    "dev": "nodemon backend/server.js",
+    "start": "node backend/server.js",
+    "build": "bun install && cd frontend && bun install && bun run build"
   },
   "type": "module",
   "dependencies": {

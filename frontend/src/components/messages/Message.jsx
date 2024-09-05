@@ -5,10 +5,10 @@ import useConversation from '../../zustand/useConversation'
 function Message({message}) {
   const {authUser} = useAuthContext();
   const {selectedConversation} = useConversation();
-  const fromMe = authUser.user._id === message.senderId;
+  const fromMe = authUser._id === message.senderId;
   const chatClass = fromMe ? "chat-end" : "chat-start";
   const bgClr = fromMe ? "bg-blue-500" : null;
-  const profilePic = fromMe ? authUser.user.profilePic : selectedConversation?.profilePic;
+  const profilePic = fromMe ? authUser.profilePic : selectedConversation?.profilePic;
   const shakeClass = message.shouldShake ? "shake" : "";
 
   const messageTime = new Date(message.createdAt).toLocaleTimeString([], {
