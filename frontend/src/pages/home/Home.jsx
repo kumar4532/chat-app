@@ -4,7 +4,7 @@ import MessageContainer from '../../components/messages/MessageContainer';
 
 function Home() {
   return (
-    <div className='flex h-auto lg:w-full rounded-lg overflow-hidden'>
+    <div className='flex max-h-[80vh] lg:w-full rounded-lg overflow-hidden'>
       <Sidebar />
       <MessageContainer />
     </div>
