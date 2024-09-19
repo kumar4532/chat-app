@@ -1,39 +1,40 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { CiSearch } from "react-icons/ci";
 import useGetCoversations from '../../hooks/useGetCoversation';
 import useConversation from "../../zustand/useConversation"
 import toast from 'react-hot-toast';
 
-function SearchInput() {
-  const [search, setSearch] = useState()
+function SearchInput({ setSelectedUser }) {
+  const [search, setSearch] = useState("")
+  const [searchConvos, setSearchConvos] = useState([]);
   const {conversations} = useGetCoversations();
   const {setSelectedConversation} = useConversation();
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!search) {
-      setSelectedConversation(null)
-      return
+  useEffect(() => {
+    const searchConversations = () => {
+      const lowerInput = search.toLowerCase();
+      const matchedUsers = conversations.filter(user => 
+          user.fullname.toLowerCase().includes(lowerInput)
+      );
+      setSearchConvos(matchedUsers);
     };
 
-    const normalSearch = search.toLowerCase();
-    const matchedConvo = conversations.find((convo) => {
-      const fullname = convo.fullname.toLowerCase();
-      return fullname.includes(normalSearch)
-    })
-
-    if (matchedConvo) {
-      setSelectedConversation(matchedConvo);
-      setSearch("");
+    if (search) {
+      searchConversations();
     } else {
-      toast.error("No such user found");
-      setSearch("");
+      setSearchConvos([]);
     }
+  }, [search, conversations])
+  
+  const handleStartConvo = (user) => {
+    setSelectedConversation(user)
+    setSearch("");
+    setSelectedUser(user);
   }
   
   return (
     <div>
-        <form onSubmit={handleSubmit} className='flex items-center gap-2'>
+        <div className='flex items-center gap-2'>
             <input
             type="text" 
             placeholder='Search...' 
@@ -41,9 +42,28 @@ function SearchInput() {
             value={search}
             onChange={(e) => setSearch(e.target.value)} />
             <button type='submit' className='btn btn-circle bg-gray-800 text-white'><CiSearch  className='w-7 h-7 outline-none' /></button>
-        </form>
+        </div>
+        {
+          search.trim() !== '' && searchConvos.length > 0 && (
+            <div className='bg-slate-900 rounded-xl mt-2 text-white w-full'>
+              <ul className='p-4'>
+                {searchConvos.map((user, idx) => (
+                  <div key={idx}>
+                    <div className='flex flex-row justify-between items-center cursor-pointer' onClick={() => handleStartConvo(user)}>
+                      <div className='w-12 rounded-full'>
+                          <img src={user.profilePic} alt="user avatar" />
+                      </div>
+                      <li className="truncate flex-grow">{user.fullname}</li>
+                    </div>
+                    {idx !== searchConvos.length - 1 && <div className="divider my-2"></div>}
+                  </div>
+                ))}
+              </ul>
+            </div>
+          )
+        }
     </div>
   )
 }
 
-export default SearchInput
+export default SearchInput;

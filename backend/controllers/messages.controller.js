@@ -74,3 +74,18 @@ export const getMessages = async(req, res) => {
         throw error
     }
 }
+
+export const getAllConversationsOfUser = async (req, res) => {
+    try {
+        const userId = req.user._id;
+
+        const allConversations = await Conversation.find({
+            participents: userId
+        }).populate('participents', '-password').select("-messages");
+
+        res.status(200).json(allConversations);
+    } catch (error) {
+        console.error("Error in getAllConversationsOfUser controller", error);
+        res.status(500).json({ error: "Internal server error" });
+    }
+}
