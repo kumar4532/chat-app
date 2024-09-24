@@ -94,19 +94,15 @@ const updateUserProfilePic = async(req, res) => {
         const newProfilePic = req.file?.path
         const profilePic = await uploadOnCloudinary(newProfilePic);
 
-        console.log(profilePic);
-        
         if (!profilePic) {
             return res.status(400).json("Please upload a right picture");
         };
-
-        const secureUrl = profilePic.url.replace("http://", "https://");
 
         const user = await User.findByIdAndUpdate(
             id,
             {
                 $set: {
-                    profilePic: secureUrl
+                    profilePic: profilePic.url
                 }
             },
             {new: true}
