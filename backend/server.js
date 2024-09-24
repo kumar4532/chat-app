@@ -18,7 +18,8 @@ const PORT = process.env.PORT || 3000;
 
 const __dirname = path.resolve();
 
-app.use(express.json());  // to parse the incoming requests with json pyloads (from req.body)
+app.use(express.urlencoded({extended: true}))
+app.use(express.json());
 app.use(cookieParser());
 
 app.use("/api/auth", authRoutes);

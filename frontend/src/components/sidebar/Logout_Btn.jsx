@@ -6,7 +6,7 @@ function Logout_Btn() {
   const {loading, logout} = useLogout();
 
   return (
-    <div className='mt-auto'>
+    <div className='mt-auto flec flex-row'>
         {
           !loading ? (
             <BiLogOut 

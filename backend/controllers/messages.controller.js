@@ -19,6 +19,7 @@ export const sendMessage = async (req, res) => {
         }
 
         const newMessage = new Message({
+            conversationId: conversation._id,
             senderId: senderUser,
             receiverId: receiverUser,
             message

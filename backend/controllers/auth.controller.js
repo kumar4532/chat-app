@@ -1,6 +1,7 @@
 import User from "../models/user.model.js"
 import bcrypt from 'bcryptjs'
 import generateTokenAndSetCookies from "../utils/generateTokens.js";
+import { uploadOnCloudinary } from "../utils/cloudinary.js";
 
 const signup = async (req, res) => {
     try {
@@ -86,8 +87,64 @@ const logout = (req, res) => {
     }
 }
 
+const updateUserProfilePic = async(req, res) => {
+    try {
+        const id = req.user._id;
+
+        const newProfilePic = req.file?.path
+        const profilePic = await uploadOnCloudinary(newProfilePic);
+
+        if (!profilePic) {
+            return res.status(400).json("Please upload a right picture");
+        };
+
+        const user = await User.findByIdAndUpdate(
+            id,
+            {
+                $set: {
+                    profilePic: profilePic.url
+                }
+            },
+            {new: true}
+        )
+
+        return res.status(200).json(user)
+    } catch (error) {
+        console.log("Error in edit controller", error);
+        throw error;
+    }
+}
+
+const updateUserName = async(req, res) => {
+    try {
+        const id = req.user._id;
+        const {fullname} = req.body
+
+        if (!fullname) {
+            return res.status(400).json("Please enter correct name");
+        };
+
+        const user = await User.findByIdAndUpdate(
+            id,
+            {
+                $set: {
+                    fullname
+                }
+            },
+            {new: true}
+        )
+
+        return res.status(200).json(user)
+    } catch (error) {
+        console.log("Error in edit controller", error);
+        throw error;
+    }
+}
+
 export {
     signup,
     login,
-    logout
+    logout,
+    updateUserProfilePic,
+    updateUserName
 }
