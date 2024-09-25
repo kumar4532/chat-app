@@ -21,9 +21,6 @@ function Messages() {
     }, 100);
   }, [messages]);
 
-
-  
-
   console.log(messages);
   const userConvoId = messages.length > 0 ? messages[0].conversationId : null;
 
