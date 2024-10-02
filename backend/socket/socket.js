@@ -1,8 +1,7 @@
 import { Server } from "socket.io";
 import http from "http";
 import express from "express";
-import Message from "../models/message.model.js";
-import Conversation from "../models/conversation.model.js";
+// import Message from "../models/message.model.js";
 
 const app = express();
 
@@ -29,23 +28,29 @@ io.on("connection", (socket) => {
 	// io.emit() is used to send events to all the connected clients
 	io.emit("getOnlineUsers", Object.keys(userSocketMap));
 
-	socket.on("markMessagesAsSeen", async ({ conversationId, userId }) => {
-		try {
-			await Message.updateMany(
-				{ conversationId: conversationId, seen: false },
-				{ $set: { seen: true } }
-			);
-			await Conversation.updateOne(
-				{ _id: conversationId },
-				{ $set: { "messages.$[].seen": true } }
-			);
-			io.to(userSocketMap[userId]).emit("messagesSeen", { conversationId });
-			console.log("EmmitedId", conversationId);
-			
-		} catch (error) {
-			console.log(error);
-		}
-	});
+	// socket.on("markMessagesAsSeen", async ({ messageId, userId }) => {
+	// 	try {
+	// 		const message = await Message.findOneAndUpdate(
+	// 			{ _id: messageId },
+	// 			{ $set: { seen: true } },
+	// 			{ new: true }
+	// 		).lean();			  
+	  
+	// 	  if (message) {
+	// 		console.log("Message found and updated:", message);
+	// 		console.log("Emitting to user with socket:", userSocketMap[userId]);
+	// 		io.to(userSocketMap[userId]).emit("messagesSeen", { 
+	// 		  messageId: message._id,
+	// 		  conversationId: message.conversationId 
+	// 		});
+	// 	  } else {
+	// 		console.log("Message not found or already seen");
+	// 	  }
+	// 	} catch (error) {
+	// 	  console.error("Error marking message as seen:", error);
+	// 	}
+	//   });
+	  
 
 	// socket.on() is used to listen to the events. can be used both on client and server side
 	socket.on("disconnect", () => {

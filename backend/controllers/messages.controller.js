@@ -1,5 +1,6 @@
 import Conversation from "../models/conversation.model.js"
 import Message from "../models/message.model.js"
+import { uploadOnCloudinary } from "../utils/cloudinary.js"
 import { getReceiverSocketId, io } from "../socket/socket.js";
 
 export const sendMessage = async (req, res) => {
@@ -7,7 +8,21 @@ export const sendMessage = async (req, res) => {
         const {message} = req.body;
         const {id: receiverUser} = req.params;
         const senderUser = req.user._id;
-
+        const uploadFile = req.file?.path
+        
+        if (!message && !uploadFile) {
+            return res.status(400).json({ error: "Please provide either a message or a file" });
+        }
+        
+        let file = "";
+        if (uploadFile) {
+            file = await uploadOnCloudinary(uploadFile);
+            
+            if (!file || !file.url) {
+                return res.status(400).json({ error: "File upload failed" });
+            }
+        }    
+            
         let conversation = await Conversation.findOne({
             participents: { $all: [senderUser, receiverUser] }
         })
@@ -22,7 +37,8 @@ export const sendMessage = async (req, res) => {
             conversationId: conversation._id,
             senderId: senderUser,
             receiverId: receiverUser,
-            message
+            message: message || "",
+            file: file?.url
         })
 
         if (newMessage) {

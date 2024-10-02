@@ -5,16 +5,48 @@ import toast from "react-hot-toast"
 function useSendMessage() {
   const {messages, setMessages, selectedConversation} = useConversation()
   const [loading, setLoading] = useState(false)
+
+  const validateFile = (file) => {
+    const validTypes = ['image/jpeg', 'image/png', 'image/gif', 'application/pdf'];
+    const maxSize = 2 * 1024 * 1024;
+
+    if (!validTypes.includes(file.type)) {
+      throw new Error('Invalid file type. Only images (JPEG, PNG, GIF) and PDF files are allowed.');
+    }
+
+    if (file.size > maxSize) {
+      throw new Error('File size exceeds 2MB limit.');
+    }
+  }
   
-  const sendMessage = async(message) => {
+  const sendMessage = async(message, file) => {
+
+    if (!message && !file) {
+        toast.error('Please provide a message or select a file.');
+        return;
+    }
+
+    const formData = new FormData();
+
+    if (file) {
+        try {
+          validateFile(file);
+          formData.append("file", file);
+        } catch (error) {
+          toast.error(error.message);
+          return;
+        }
+    }
+
+    if (message) {
+        formData.append("message", message);
+    }
+    
     setLoading(true)
     try {
         const res = await fetch(`/api/messages/send/${selectedConversation._id}`, {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({message})
+            body: formData
         })
 
         const data = await res.json();
@@ -22,7 +54,6 @@ function useSendMessage() {
             throw new error
         }
         setMessages([...messages, data.newMessage])
-        setLoading(false)
     } catch (error) {
         toast.error(error.message)
     } finally {
