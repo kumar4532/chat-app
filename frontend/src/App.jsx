@@ -4,6 +4,8 @@ import { Navigate, Route, Routes } from "react-router-dom"
 import Login from "./pages/login/Login"
 import SignUp from "./pages/signup/SignUp"
 import Profile from "./pages/profile/Profile"
+import Video from "./pages/call/Video"
+import Voice from "./pages/call/Voice"
 import {Toaster} from "react-hot-toast"
 import { useAuthContext } from "./context/AuthContext"
 
@@ -17,6 +19,8 @@ function App() {
           <Route path="/login" element={authUser ? <Navigate to={"/"} /> : <Login />} />
           <Route path="/signup" element={authUser ? <Navigate to={"/"} /> : <SignUp />} />
           <Route path="/profile" element={authUser ? <Profile /> : <Login />} />
+          <Route path="/video" element={authUser ? <Video /> : <Login />} />
+          <Route path="/voice" element={authUser ? <Voice /> : <Login />} />
         </Routes>
         <Toaster />
       </div>

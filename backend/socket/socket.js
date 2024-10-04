@@ -1,6 +1,7 @@
 import { Server } from "socket.io";
 import http from "http";
 import express from "express";
+import User from "../models/user.model.js"
 // import Message from "../models/message.model.js";
 
 const app = express();
@@ -27,6 +28,46 @@ io.on("connection", (socket) => {
 
 	// io.emit() is used to send events to all the connected clients
 	io.emit("getOnlineUsers", Object.keys(userSocketMap));
+
+	socket.on("outGoingVideoCall", async ({ userId, otherUserId, roomId }) => {
+		const recipientSocketId = userSocketMap[otherUserId];
+
+		if (recipientSocketId) {
+			const callingUser = await User.findById(userId);
+			io.to(recipientSocketId).emit("incomingVideoCall", {
+				caller: callingUser,
+				callerSocketId: socket.id,
+				roomID: roomId
+			});
+		} else {
+			socket.emit("callError", { message: "The user is not online" });
+		}
+	});
+
+	socket.on("outGoingVoiceCall", async ({ userId, otherUserId, roomId }) => {
+		const recipientSocketId = userSocketMap[otherUserId];
+
+		if (recipientSocketId) {
+			const callingUser = await User.findById(userId);
+			io.to(recipientSocketId).emit("incomingVoiceCall", {
+				caller: callingUser,
+				callerSocketId: socket.id,
+				roomId
+			});
+		} else {
+			socket.emit("callError", { message: "The user is not online" });
+		}
+	});
+	
+	socket.on("rejectCall", ({ callerSocketId }) => {        
+		io.to(callerSocketId).emit("callHasBeenRejected");
+	});
+
+	socket.on("callHasBeenCut", ({receiver}) => {		
+		const receiverSocketId = userSocketMap[receiver];
+
+		io.to(receiverSocketId).emit("callCutByCaller");
+	})
 
 	// socket.on("markMessagesAsSeen", async ({ messageId, userId }) => {
 	// 	try {
