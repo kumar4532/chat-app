@@ -1,18 +1,19 @@
-import React, { createContext, useContext, useEffect, useState } from 'react'
-import { useAuthContext } from "./AuthContext"
-import io from "socket.io-client"
-import IncomingCallModal from '../components/alert/IncomingCall'
+import React, { createContext, useContext, useEffect, useState } from 'react';
+import { useAuthContext } from "./AuthContext";
+import io from "socket.io-client";
+import IncomingCallModal from '../components/alert/IncomingCall';
 
-const SocketContext = createContext()
+const SocketContext = createContext();
 
 export const useSocketContext = () => {
     return useContext(SocketContext);
-}
+};
 
 export const SocketContextProvider = ({ children }) => {
-    const [socket, setSocket] = useState(null)
-    const [onlineUsers, setOnlineUsers] = useState([])
-    const [incomingCall, setIncomingCall] = useState(null)
+    const [socket, setSocket] = useState(null);
+    const [onlineUsers, setOnlineUsers] = useState([]);
+    const [incomingCall, setIncomingCall] = useState(null);
+    const [currentCall, setCurrentCall] = useState(null);
     const { authUser } = useAuthContext();
 
     useEffect(() => {
@@ -21,13 +22,13 @@ export const SocketContextProvider = ({ children }) => {
                 query: {
                     userId: authUser._id
                 }
-            })
+            });
 
             setSocket(socket);
 
             socket.on("getOnlineUsers", (users) => {
-                setOnlineUsers(users)
-            })
+                setOnlineUsers(users);
+            });
 
             socket.on("callError", ({ message }) => {
                 alert(message);
@@ -41,14 +42,20 @@ export const SocketContextProvider = ({ children }) => {
                 setIncomingCall({ ...data, type: 'voice' });
             });
 
-            return () => socket.close()
+            socket.on("callAccepted", ({ accepterId, accepterName, roomId }) => {
+                setCurrentCall({ accepterId, accepterName, roomId });
+                // Join the room when the call is accepted
+                socket.emit("joinRoom", { roomId });
+            });
+
+            return () => socket.close();
         } else {
             if (socket) {
                 socket.close();
-                setSocket(null)
+                setSocket(null);
             }
         }
-    }, [authUser])
+    }, [authUser]);
 
     const generateRoomId = (callerId, otherUserId) => {
         return `${callerId}-${otherUserId}-${Date.now()}`;
@@ -62,6 +69,7 @@ export const SocketContextProvider = ({ children }) => {
                 otherUserId: otherUserId,
                 roomId: roomId
             });
+            setCurrentCall({ roomId, type: 'video' });
         } else {
             console.error("Socket not available");
         }
@@ -75,6 +83,7 @@ export const SocketContextProvider = ({ children }) => {
                 otherUserId: otherUserId,
                 roomId: roomId
             });
+            setCurrentCall({ roomId, type: 'voice' });
         } else {
             console.error("Socket not available");
         }
@@ -87,6 +96,8 @@ export const SocketContextProvider = ({ children }) => {
                 accepterId: authUser._id,
                 accepterName: authUser.fullname
             });
+            // Join the room when accepting the call
+            socket.emit("joinRoom", { roomId });
         }
         setIncomingCall(null);
     };
@@ -105,6 +116,7 @@ export const SocketContextProvider = ({ children }) => {
             makeVideoCall, 
             makeVoiceCall, 
             incomingCall,
+            currentCall,
             acceptCall,
             rejectCall,
             setIncomingCall
@@ -112,5 +124,5 @@ export const SocketContextProvider = ({ children }) => {
             {children}
             <IncomingCallModal />
         </SocketContext.Provider>
-    )
-}
+    );
+};
